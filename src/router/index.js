@@ -3,6 +3,7 @@ import HomeView from '@/views/HomeView.vue'
 import AboutView from '@/views/AboutView.vue'
 import SignUpView from '@/views/SignUpView.vue'
 import LoginView from '@/views/LoginView.vue'
+import CoursesView from '@/views/CoursesView.vue'
 import MyPageView from '@/views/dashboard/MyPageView.vue'
 
 const routes = [
@@ -25,6 +26,11 @@ const routes = [
     path: '/login',
     name: 'Login',
     component: LoginView
+  },
+  {
+    path: '/courses',
+    name: 'Courses',
+    component: CoursesView
   },
   {
     path: '/dashboard/mypage',
