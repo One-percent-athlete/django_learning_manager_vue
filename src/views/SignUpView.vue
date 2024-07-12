@@ -93,24 +93,24 @@ export default {
                 }
 
                 axios
-                    .post('api/v1/users/', formData)
-                    .then(response => {
-                        this.$router.push('/login')
-                    })
-                    .catch(error => {
-                        if (error.response) {
-                            for (const property in error.response.data) {
-                                this.errors.push (`${property}: ${error.response.data[property]}`)
-                            }
-
-                            console.log(JSON.stringify(error.response.data))
-
-                        } else if (error.message) {
-                            this.error.push('Something Went Wrong, Please Try Again..')
-
-                            console.log(JSON.stringify(error))
+                .post('api/v1/users/', formData)
+                .then(response => {
+                    this.$router.push('/login')
+                })
+                .catch(error => {
+                    if (error.response) {
+                        for (const property in error.response.data) {
+                            this.errors.push (`${property}: ${error.response.data[property]}`)
                         }
-                    })
+
+                        console.log(JSON.stringify(error.response.data))
+
+                    } else if (error.message) {
+                        this.error.push('Something Went Wrong, Please Try Again..')
+
+                        console.log(JSON.stringify(error))
+                    }
+                })
 
             }
         }

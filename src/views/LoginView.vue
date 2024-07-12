@@ -86,33 +86,33 @@ export default {
                 }
 
                 axios
-                    .post('api/v1/token/login/', formData)
-                    .then(response => {
+                .post('api/v1/token/login/', formData)
+                .then(response => {
 
-                        const token = response.data.auth_token
+                    const token = response.data.auth_token
 
-                        this.$store.commit('setToken', token)
+                    this.$store.commit('setToken', token)
 
-                        axios.defaults.headers.common['Authorization'] = "Token " + token
+                    axios.defaults.headers.common['Authorization'] = "Token " + token
 
-                        localStorage.setItem('token', token)
+                    localStorage.setItem('token', token)
 
-                        this.$router.push('/dashboard/mypage')
-                    })
-                    .catch(error => {
-                        if (error.response) {
-                            for (const property in error.response.data) {
-                                this.errors.push (`${property}: ${error.response.data[property]}`)
-                            }
-
-                            console.log(JSON.stringify(error.response.data))
-
-                        } else if (error.message) {
-                            this.error.push('Something Went Wrong, Please Try Again..')
-
-                            console.log(JSON.stringify(error))
+                    this.$router.push('/dashboard/mypage')
+                })
+                .catch(error => {
+                    if (error.response) {
+                        for (const property in error.response.data) {
+                            this.errors.push (`${property}: ${error.response.data[property]}`)
                         }
-                    })
+
+                        console.log(JSON.stringify(error.response.data))
+
+                    } else if (error.message) {
+                        this.error.push('Something Went Wrong, Please Try Again..')
+
+                        console.log(JSON.stringify(error))
+                    }
+                })
 
             }
         }
