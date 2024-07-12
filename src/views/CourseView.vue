@@ -14,19 +14,26 @@
                     <h2>Table of contents</h2>
 
                     <ul>
-                      <li><a href="#">Introduction</a></li>
-                      <li><a href="#">Get Started</a></li>
-                      <li><a href="#">Part 1</a></li>
-                      <li><a href="#">Part 2</a></li>
-                      <li><a href="#">Summary</a></li>
+                      <li 
+                        v-for="lesson in lessons"
+                        v-bind:key="lesson.id"
+                      >
+                        <a @click="activeLesson = lesson">{{ lesson.title }}</a>
+                      </li>
+                      
                     </ul>
 
                   </div>
                   
                   <div class="column is-10">
                     <template v-if="$store.state.user.isAuthenticated">
-                      <h2>Introduction</h2>
-                      <p>{{ course.long_description }}</p>
+                      <template v-if="activeLesson">
+                        <h2>{{ activeLesson.title }}</h2>
+                        {{ activeLesson.long_description }}
+                      </template>
+                      <template v-else>
+                        <p>{{ course.long_description }}</p>
+                      </template>
                     </template>
                     <template v-else>
                       <h2>Access Denied..</h2>
@@ -46,7 +53,9 @@ import axios from 'axios';
 export default {
     data() {
       return {
-          course: []
+          course: {},
+          lessons: [],
+          activeLesson: null
       }
     },
     mounted() {
@@ -54,7 +63,8 @@ export default {
       axios
           .get(`/api/v1/courses/${slug}/`)
           .then(response => {
-              this.course = response.data
+              this.course = response.data.course
+              this.lessons = response.data.lessons
           })
     }
 }

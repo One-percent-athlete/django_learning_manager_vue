@@ -21,7 +21,7 @@
 
                     </div>
 
-                    <form v-on:submit.prvent="submitForm">
+                    <form v-on:submit.prevent="submitForm">
                         <div class="field">
                             <label>Email</label>
                             <div class="control">
