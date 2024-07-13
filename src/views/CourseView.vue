@@ -18,7 +18,7 @@
                         v-for="lesson in lessons"
                         v-bind:key="lesson.id"
                       >
-                        <a @click="activeLesson = lesson">{{ lesson.title }}</a>
+                        <a @click="setActiveLesson(lesson)">{{ lesson.title }}</a>
                       </li>
                       
                     </ul>
@@ -30,6 +30,46 @@
                       <template v-if="activeLesson">
                         <h2>{{ activeLesson.title }}</h2>
                         {{ activeLesson.long_description }}
+                        <hr>
+
+                        <article 
+                        class="media box"
+                        v-for="comment in comments"
+                        v-bind:key="comment.id"
+                        >
+                          <div class="media-content">
+                            <div class="content">
+                              <p>
+                                <strong>{{ comment.title }}</strong><small class="ml-2">({{ comment.created_at }})</small><br>
+                                {{ comment.content }}
+                              </p>
+                            </div>
+                          </div>
+                        </article>
+
+                        <hr>
+
+                        <form v-on:submit.prevent="submitComment()">
+                          <div class="field">
+                            <label class="label">Title</label>
+                            <div class="control">
+                              <input type="text" class="input" v-model="comment.title">
+                            </div>
+                          </div>
+
+                          <div class="field">
+                            <label class="label">Content</label>
+                            <div class="control">
+                              <textarea class="textarea" v-model="comment.content"></textarea>
+                            </div>
+                          </div>
+
+                          <div class="field mt-4">
+                            <div class="control">
+                              <button class="button is-link">Submit</button>
+                            </div>
+                          </div>
+                        </form>
                       </template>
                       <template v-else>
                         <p>{{ course.long_description }}</p>
@@ -55,9 +95,15 @@ export default {
       return {
           course: {},
           lessons: [],
-          activeLesson: null
+          comments:[],
+          activeLesson: null,
+          comment: {
+            title: '',
+            content: ''
+          }
       }
     },
+
     mounted() {
       const slug = this.$route.params.slug
       axios
@@ -66,7 +112,39 @@ export default {
               this.course = response.data.course
               this.lessons = response.data.lessons
           })
+    },
+
+    methods: {
+      submitComment() {
+        axios
+            .post(`/api/v1/courses/${this.course.slug}/${this.activeLesson.slug}/`, this.comment)
+            .then(response => {
+              this.comment.title = ""
+              this.comment.content = ""
+              alert('Comment Added!')
+            })
+            .catch(error => {
+              console.log(error)
+            })
+      },
+
+      setActiveLesson(lesson) {
+        this.activeLesson = lesson
+        this.getComments()
+      },
+
+      getComments() {
+        axios
+            .get(`/api/v1/courses/${this.course.slug}/${this.activeLesson.slug}/comments/`)
+            .then(response => {
+              console.log(response.data)
+
+              this.comments = response.data
+            })
+
+      }
     }
+
 }
 
 </script>
