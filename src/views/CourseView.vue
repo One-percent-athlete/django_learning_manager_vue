@@ -50,6 +50,15 @@
                         <hr>
 
                         <form v-on:submit.prevent="submitComment()">
+
+                          <div 
+                          class="notification is-danger my-2"
+                          v-for="error in errors"
+                          v-bind:key="error"
+                          >{{ error }}
+                          </div>
+
+
                           <div class="field">
                             <label class="label">Title</label>
                             <div class="control">
@@ -97,6 +106,7 @@ export default {
           lessons: [],
           comments:[],
           activeLesson: null,
+          errors: [],
           comment: {
             title: '',
             content: ''
@@ -116,16 +126,30 @@ export default {
 
     methods: {
       submitComment() {
-        axios
-            .post(`/api/v1/courses/${this.course.slug}/${this.activeLesson.slug}/`, this.comment)
-            .then(response => {
-              this.comment.title = ""
-              this.comment.content = ""
-              alert('Comment Added!')
-            })
-            .catch(error => {
-              console.log(error)
-            })
+
+        this.errors = []
+
+        if (this.comment.title === '') {
+          this.errors.push('The Title Field Must Be Filled Out')
+        }
+
+        if (this.comment.content === '') {
+          this.errors.push('The Content Field Must Be Filled Out')
+        }
+
+        if (!this.errors.length) {
+          axios
+              .post(`/api/v1/courses/${this.course.slug}/${this.activeLesson.slug}/`, this.comment)
+              .then(response => {
+                this.comment.title = ""
+                this.comment.content = ""
+                this.comments.push(response.data)
+              })
+              .catch(error => {
+                console.log(error)
+              })
+        }
+
       },
 
       setActiveLesson(lesson) {

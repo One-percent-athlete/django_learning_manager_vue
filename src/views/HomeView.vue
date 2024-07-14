@@ -40,6 +40,17 @@
           <div class="column is-12 has-text-centered">
             <a href="#" class="button is-info is-size-3 mt-6 mb-6">Click To Enroll</a>
           </div>
+
+          <hr>
+
+          <div 
+          class="column is-3"
+          v-for="course in courses"
+          v-bind:key="course.id"
+          >
+              <CourseCardView :course="course"/>
+          </div> 
+
         </div>
       </div>
     </section>
@@ -47,7 +58,25 @@
 </template>
 
 <script>
+import axios from 'axios';
+import CourseCardView from '@/components/CourseCardView.vue' 
+
 export default {
   name: 'HomeView',
+  data() {
+        return {
+            courses: []
+        }
+  },
+  components: {
+      CourseCardView
+  },
+  mounted() {
+      axios
+          .get('/api/v1/courses/homepage_courses/')
+          .then(response => {
+              this.courses = response.data
+          })
+  }
 }
 </script>
