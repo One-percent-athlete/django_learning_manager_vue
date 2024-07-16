@@ -38,7 +38,7 @@
             </div>
           </div>
           <div class="column is-12 has-text-centered">
-            <a href="#" class="button is-info is-size-3 mt-6 mb-6">Click To Enroll</a>
+            <a href="/signup" class="button is-info is-size-3 mt-6 mb-6">Click To Sign Up</a>
           </div>
 
           <hr>
@@ -71,12 +71,14 @@ export default {
   components: {
       CourseCardView
   },
-  mounted() {
-      axios
+  async mounted() {
+      await axios
           .get('/api/v1/courses/homepage_courses/')
           .then(response => {
               this.courses = response.data
           })
+
+          document.title = 'Home | IStudy'
   }
 }
 </script>

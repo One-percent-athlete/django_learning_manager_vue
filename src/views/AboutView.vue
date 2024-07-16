@@ -9,3 +9,11 @@
     <section class="section">This is an about page</section>
   </div>
 </template>
+
+<script>
+export default {
+  mounted() {
+    document.title = 'About | IStudy'
+  }
+}
+</script>

@@ -16,6 +16,10 @@
 import axios from 'axios';
 
 export default {
+
+    mounted() {
+        document.title = 'My Page | IStudy'
+    },
     methods: {
         async logout() {
 

@@ -62,6 +62,11 @@ export default {
             errors:[],
         }
     },
+
+    mounted() {
+        document.title = 'Login | IStudy'
+    },
+
     methods: {
         submitForm() {
             console.log('submitForm')

@@ -90,6 +90,8 @@ export default {
             this.categories = response.data
         })
         this.get_courses()
+        
+        document.title = 'Courses | IStudy'
     },
 
     methods: {
