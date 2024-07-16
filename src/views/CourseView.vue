@@ -30,55 +30,31 @@
                       <template v-if="activeLesson">
                         <h2>{{ activeLesson.title }}</h2>
                         {{ activeLesson.long_description }}
-                        <hr>
-
-                        <article 
-                        class="media box"
-                        v-for="comment in comments"
-                        v-bind:key="comment.id"
-                        >
-                          <div class="media-content">
-                            <div class="content">
-                              <p>
-                                <strong>{{ comment.title }}</strong><small class="ml-2">({{ comment.created_at }})</small><br>
-                                {{ comment.content }}
-                              </p>
-                            </div>
-                          </div>
-                        </article>
 
                         <hr>
 
-                        <form v-on:submit.prevent="submitComment()">
+                        <template v-if="activeLesson.lesson_type === 'quiz'">
+                          <QuizView 
+                            v-bind:quiz="quiz"
+                          />
+                        </template>
 
-                          <div 
-                          class="notification is-danger my-2"
-                          v-for="error in errors"
-                          v-bind:key="error"
-                          >{{ error }}
-                          </div>
+                        <template v-if="activeLesson.lesson_type === 'article'">
+                          <CommentView 
+                            v-for="comment in comments"
+                            v-bind:key="comment.id"
+                            v-bind:comment="comment"
+                          />
+                          <hr>
 
+                          <AddCommentView
+                            v-bind:course="course"
+                            v-bind:activeLesson="activeLesson"
+                            v-on:submitComment="submitComment"
+                          />
+  
 
-                          <div class="field">
-                            <label class="label">Title</label>
-                            <div class="control">
-                              <input type="text" class="input" v-model="comment.title">
-                            </div>
-                          </div>
-
-                          <div class="field">
-                            <label class="label">Content</label>
-                            <div class="control">
-                              <textarea class="textarea" v-model="comment.content"></textarea>
-                            </div>
-                          </div>
-
-                          <div class="field mt-4">
-                            <div class="control">
-                              <button class="button is-link">Submit</button>
-                            </div>
-                          </div>
-                        </form>
+                        </template>
                       </template>
                       <template v-else>
                         <p>{{ course.long_description }}</p>
@@ -99,7 +75,17 @@
 
 <script>
 import axios from 'axios';
+import CommentView from '@/components/CommentView.vue';
+import AddCommentView from '@/components/AddCommentView.vue';
+import QuizView from '@/components/QuizView.vue';
+
 export default {
+  components: {
+    CommentView,
+    AddCommentView,
+    QuizView,
+  },
+
     data() {
       return {
           course: {},
@@ -107,66 +93,53 @@ export default {
           comments:[],
           activeLesson: null,
           errors: [],
-          comment: {
-            title: '',
-            content: ''
-          }
+          quiz: {}, 
       }
     },
 
-    async mounted() {
+    mounted() {
       const slug = this.$route.params.slug
-      await axios
-          .get(`/api/v1/courses/${slug}/`)
-          .then(response => {
-              this.course = response.data.course
-              this.lessons = response.data.lessons
-          })
+      axios
+      .get(`/api/v1/courses/${slug}/`)
+      .then(response => {
+          this.course = response.data.course
+          this.lessons = response.data.lessons
+      })
 
-          document.title = this.course.title + ' | IStudy'
+      document.title = this.course.title + ' | IStudy'
     },
 
     methods: {
-      submitComment() {
-
-        this.errors = []
-
-        if (this.comment.title === '') {
-          this.errors.push('The Title Field Must Be Filled Out')
-        }
-
-        if (this.comment.content === '') {
-          this.errors.push('The Content Field Must Be Filled Out')
-        }
-
-        if (!this.errors.length) {
-          axios
-              .post(`/api/v1/courses/${this.course.slug}/${this.activeLesson.slug}/`, this.comment)
-              .then(response => {
-                this.comment.title = ""
-                this.comment.content = ""
-                this.comments.push(response.data)
-              })
-              .catch(error => {
-                console.log(error)
-              })
-        }
-
+      submitComment(comment) {
+        this.comments.push(comment)
       },
-
+  
       setActiveLesson(lesson) {
         this.activeLesson = lesson
-        this.getComments()
-      },
 
+        if (lesson.lesson_type === 'quiz') {
+          this.getQuiz()
+        } else {
+          this.getComments()
+        }
+      },
+      getQuiz() {
+        axios
+        .get(`/api/v1/courses/${this.course.slug}/${this.activeLesson.slug}/quizzes/`)
+        .then(response => {
+          console.log(response.data)
+
+          this.quiz = response.data
+        })
+      },
       getComments() {
         axios
-            .get(`/api/v1/courses/${this.course.slug}/${this.activeLesson.slug}/comments/`)
-            .then(response => {
-              console.log(response.data)
+        .get(`/api/v1/courses/${this.course.slug}/${this.activeLesson.slug}/comments/`)
+        .then(response => {
+          console.log(response.data)
 
-              this.comments = response.data
-            })
+          this.comments = response.data
+        })
 
       }
     }
