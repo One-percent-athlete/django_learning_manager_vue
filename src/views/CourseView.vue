@@ -29,6 +29,19 @@
                     <template v-if="$store.state.user.isAuthenticated">
                       <template v-if="activeLesson">
                         <h2>{{ activeLesson.title }}</h2>
+
+                        <span 
+                        class="button tag is-success"
+                        v-if="activity.status === 'inprogress'"
+                        @click="trackDone()"
+                        >In Progress(Mark As Done)</span>
+
+                        <span 
+                        class="tag is-warning"
+                        v-else>Done</span>
+
+                        <hr>
+
                         {{ activeLesson.long_description }}
 
                         <hr>
@@ -38,6 +51,13 @@
                             v-bind:quiz="quiz"
                           />
                         </template>
+
+                        <template v-if="activeLesson.lesson_type === 'video'">
+                          <VideoView 
+                            v-bind:video="activeLesson.video_id"
+                          />
+                        </template>
+
 
                         <template v-if="activeLesson.lesson_type === 'article'">
                           <CommentView 
@@ -78,12 +98,14 @@ import axios from 'axios';
 import CommentView from '@/components/CommentView.vue';
 import AddCommentView from '@/components/AddCommentView.vue';
 import QuizView from '@/components/QuizView.vue';
+import VideoView from '@/components/VideoView.vue';
 
 export default {
   components: {
     CommentView,
     AddCommentView,
     QuizView,
+    VideoView,
   },
 
     data() {
@@ -94,6 +116,7 @@ export default {
           activeLesson: null,
           errors: [],
           quiz: {}, 
+          activity: {}
       }
     },
 
@@ -122,7 +145,30 @@ export default {
         } else {
           this.getComments()
         }
+        this.trackProgress()
       },
+      trackProgress() {
+        axios
+        .post(`/api/v1/activities/track_progress/${this.$route.params.slug}/${this.activeLesson.slug}/`)
+        .then(response => {
+          console.log(response.data)
+
+          this.activity = response.data
+        })
+      }, 
+
+      trackDone() {
+        axios
+        .post(`/api/v1/activities/track_done/${this.$route.params.slug}/${this.activeLesson.slug}/`)
+        .then(response => {
+          console.log(response.data)
+
+          this.activity = response.data
+        })
+      },
+
+
+
       getQuiz() {
         axios
         .get(`/api/v1/courses/${this.course.slug}/${this.activeLesson.slug}/quizzes/`)
