@@ -23,9 +23,9 @@
 
                     <form v-on:submit.prevent="submitForm">
                         <div class="field">
-                            <label>Email</label>
+                            <label>Username</label>
                             <div class="control">
-                                <input type="email" class="input" v-model="username">
+                                <input type="text" class="input" v-model="username">
                             </div>
                         </div>
                         <div class="field">

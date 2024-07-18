@@ -3,7 +3,13 @@
       <div class="hero is-info">
         <div class="hero-body has-text-centered">
           <h1 class="title">{{ course.title }}</h1>
-          <h2 class="subtitle">{{ course.short_description }}</h2>
+
+          <router-link 
+          class="subtitle"
+          :to="{name: 'Author', params: {id: course.created_by.id }}"
+          >
+            By {{ course.created_by.first_name + ' ' + course.created_by.last_name}}
+          </router-link>
         </div>
       </div>
 
@@ -110,7 +116,11 @@ export default {
 
     data() {
       return {
-          course: {},
+          course: {
+          created_by: {
+            id: 0
+          }
+        },
           lessons: [],
           comments:[],
           activeLesson: null,
