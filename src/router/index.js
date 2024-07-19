@@ -6,6 +6,7 @@ import LoginView from '@/views/LoginView.vue'
 import CoursesView from '@/views/CoursesView.vue'
 import CourseView from '@/views/CourseView.vue'
 import MyPageView from '@/views/dashboard/MyPageView.vue'
+import CreateCourseView from '@/views/dashboard/CreateCourseView.vue'
 import AutherView from '@/views/AuthorView.vue'
 
 const routes = [
@@ -43,6 +44,11 @@ const routes = [
     path: '/dashboard/mypage',
     name: 'MyPage',
     component: MyPageView
+  },
+  {
+    path: '/dashboard/create-course',
+    name: 'CreateCourse',
+    component: CreateCourseView
   },
   {
     path: '/authors/:id',
