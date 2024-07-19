@@ -7,7 +7,9 @@
       </div>
   
       <section class="section">
-        <form v-on:submit.prevent="submitForm">
+          <div class="mb-6 px-6 py-4">
+            <h2 class="subtitle">Course Information</h2>
+
             <div class="field mt-2">
                 <label>
                     Title
@@ -45,11 +47,54 @@
                     </select>
                     </div>
             </div>
+        
+        </div>
 
-            <div class="field mt-4">
-                <button class="button is-success">Submit</button>
+        <div class="mb-6 px-6 py-4">
+            <h2 class="subtitle">Lessons</h2>
+
+            <div
+            v-for="(lesson, index) in form.lessons"
+            v-bind:key="index"
+            class="mb-4"
+            >
+
+                <h3 class="subtitle is-size-6">Lesson</h3>
+                <div class="field mt-2">
+                    <label>
+                        Title
+                    </label>
+                    <input 
+                    type="text" class="input" v-model="lesson.title"
+                    :name="`form.lessons[${index}][title]`"
+                    >
+                </div>
+
+                <div class="field mt-2">
+                    <label>
+                        Short Description
+                    </label>
+                    <textarea type="textarea" class="textarea" v-model="lesson.short_description" :name="`form.lessons[${index}][short_description]`"></textarea>
+                </div>
+
+                <div class="field mt-2">
+                    <label>
+                        Long Description
+                    </label>
+                    <textarea type="text" class="textarea" v-model="lesson.long_description" :name="`form.lessons[${index}][long_description]`"></textarea>
+                </div>
+
+                <hr>
             </div>
-        </form>
+
+
+            <button class="button is-primary" @click="addLesson()">Add Lesson</button>
+        </div>
+
+        <div class="field buttons mt-4">
+            <button class="button is-success" @click="submitForm('draft')">Save As Draft</button>
+            <button class="button is-info" @click="submitForm('in_review')">Submit For Review</button>
+        </div>
       </section>
 
     </div>
@@ -65,7 +110,9 @@ export default {
             title: '',
             short_description: '',
             long_description: '',
-            categories: []
+            categories: [],
+            status: '',
+            lessons: []
         },
         categories: []
     }
@@ -88,9 +135,11 @@ export default {
         })
       },
 
-      submitForm() {
+      submitForm(status) {
         console.log('submitForm')
         console.log(this.form)
+
+        this.form.status = status
 
         axios
         .post('/api/v1/courses/create_course/', this.form)
@@ -99,6 +148,15 @@ export default {
         })
         .catch(error => {
             console.log('error:', error)
+        })
+      },
+
+      addLesson() {
+        this.form.lessons.push({
+            title: '',
+            short_description: '',
+            long_description: '',
+
         })
       }
   }
